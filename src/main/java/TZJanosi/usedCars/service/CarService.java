@@ -1,0 +1,109 @@
+package TZJanosi.usedCars.service;
+
+import TZJanosi.usedCars.dto.CarDto;
+import TZJanosi.usedCars.dto.CreateCarCommand;
+import TZJanosi.usedCars.dto.Criteria;
+import TZJanosi.usedCars.exception.CarNotFoundException;
+import TZJanosi.usedCars.model.Car;
+import TZJanosi.usedCars.model.KilometerState;
+import TZJanosi.usedCars.repository.CarRepository;
+import TZJanosi.usedCars.repository.KilometerStateRepository;
+import TZJanosi.usedCars.repository.SellerRepository;
+import jakarta.transaction.Transactional;
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+
+@Service
+public class CarService {
+    private ModelMapper modelMapper;
+    private CarRepository carRepository;
+    private SellerRepository sellerRepository;
+    private KilometerStateRepository kmStateRepository;
+
+    public CarService(ModelMapper modelMapper, CarRepository carRepository, SellerRepository sellerRepository, KilometerStateRepository kmStateRepository) {
+        this.modelMapper = modelMapper;
+        this.carRepository = carRepository;
+        this.sellerRepository = sellerRepository;
+        this.kmStateRepository = kmStateRepository;
+    }
+
+    public List<CarDto> findAllCars() {
+        List<Car> cars=carRepository.findAll();
+        return cars.stream().map(c->modelMapper.map(c, CarDto.class)).toList();
+    }
+
+    public CarDto addNewCar(CreateCarCommand command) {
+        Car car=modelMapper.map(command,Car.class);
+        carRepository.save(car);
+        KilometerState kmState=modelMapper.map(command.getKilometerStates().get(0),KilometerState.class);
+        kmState.setCar(car);
+        kmStateRepository.save(kmState);
+
+        return modelMapper.map(car,CarDto.class);
+    }
+
+    public List<CarDto> findFilteredCars(Criteria criteria) {
+        if(!criteria.containsCriteria()){
+            return findAllCars();
+        }
+        else {
+            return filteredCars(criteria);
+        }
+    }
+
+    private List<CarDto> filteredCars(Criteria criteria) {
+        System.out.println("in filteredCars criteria: "+criteria);
+        int minConditionLevel=criteria.getCondition()==null?0:criteria.getCondition().getValue();
+        List<Car> cars=carRepository.findAllByCriteria(criteria.getBrand(), criteria.getModel(), criteria.getMaxAgeInYears(),criteria.getMaxKm(),minConditionLevel);
+        System.out.println("cars: "+cars);
+        Comparator<Car> comparator=Comparator.comparingInt(Car::actualKmState);
+        if(criteria.getSortDirection()!=null && criteria.getSortDirection().toString().equals("DESC")){
+            comparator=comparator.reversed();
+        }
+        return cars.stream()
+                .sorted(comparator)
+                .map(c->modelMapper.map(c, CarDto.class))
+                .toList();
+    }
+
+    public List<String> getBrands() {
+        return carRepository.findBrands();
+    }
+
+    public Car findCarById(Long id) {
+        Optional<Car> optionalCar=carRepository.findByIdWithKmStates(id);
+        if(optionalCar.isEmpty()){
+            throw new CarNotFoundException(id);
+        }
+        return optionalCar.get();
+    }
+    public CarDto findCarDtoById(Long id) {
+        return modelMapper.map(findCarById(id),CarDto.class);
+    }
+
+    @Transactional
+    public void deleteCarById(Long id) {
+//        Car carToDelete=findCarById(id);
+//        carRepository.delete(carToDelete);
+        carRepository.deleteById(id);
+    }
+
+    @Transactional
+    public CarDto addKmState(Long id, int km) {
+        Car car=findCarById(id);
+        car.addKilometerState(km);
+        return modelMapper.map(car,CarDto.class);
+    }
+
+    @Transactional
+    public void deleteAllCar() {
+        carRepository.deleteAll();
+        carRepository.resetIdGenerator();
+    }
+}
