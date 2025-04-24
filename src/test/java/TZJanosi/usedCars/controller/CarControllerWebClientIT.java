@@ -14,7 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.web.reactive.server.EntityExchangeResult;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import org.zalando.problem.Problem;
+import org.zalando.problem.Status;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -247,6 +250,24 @@ class CarControllerWebClientIT {
                 .hasFieldOrPropertyWithValue("detail","Car with id: 13, not found");
 
     }
+    @Test
+    void testNoCarFound2(){
+        Problem problem = webTestClient
+                .get()
+                .uri("/api/cars/{id}", 13)
+                .exchange()
+                .expectStatus().isNotFound()
+                .expectBody(Problem.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(problem)
+                .hasFieldOrPropertyWithValue("type", URI.create("/api/cars/NOT_FOUND"))
+                .hasFieldOrPropertyWithValue("title","Not found")
+                .hasFieldOrPropertyWithValue("status", Status.NOT_FOUND)
+                .hasFieldOrPropertyWithValue("detail","Car with id: 13, not found");
+
+    }
 
     @Test
     void testAddKmState(){
@@ -276,6 +297,24 @@ class CarControllerWebClientIT {
                 .hasFieldOrPropertyWithValue("type","/api/cars/KM_NOT_VALID")
                 .hasFieldOrPropertyWithValue("title","Km not valid")
                 .hasFieldOrPropertyWithValue("status",400)
+                .hasFieldOrPropertyWithValue("detail","Unexpected actual value of km counter! 345000 km");
+    }
+    @Test
+    void testNotValidKmState2(){
+        Problem problem = webTestClient
+                .post()
+                .uri("/api/cars/{id}/kilometerstates",3)
+                .bodyValue(345000)
+                .exchange()
+                .expectStatus().isBadRequest()
+                .expectBody(Problem.class)
+                .returnResult()
+                .getResponseBody();
+
+        assertThat(problem)
+                .hasFieldOrPropertyWithValue("type",URI.create("/api/cars/KM_NOT_VALID"))
+                .hasFieldOrPropertyWithValue("title","Km not valid")
+                .hasFieldOrPropertyWithValue("status",Status.BAD_REQUEST)
                 .hasFieldOrPropertyWithValue("detail","Unexpected actual value of km counter! 345000 km");
     }
     @Test
