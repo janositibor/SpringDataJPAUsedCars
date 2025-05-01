@@ -12,4 +12,6 @@ import java.time.LocalDate;
 public class KilometerStateDto {
     private int actualValue;
     private LocalDate date;
+
+
 }

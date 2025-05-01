@@ -45,6 +45,9 @@ public class Car {
 
 
     public int actualKmState() {
+        if(kilometerStates.isEmpty()){
+            return 0;
+        }
         return kilometerStates.get(kilometerStates.size()-1).getActualValue();
     }
 

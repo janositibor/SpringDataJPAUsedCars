@@ -1,7 +1,6 @@
 package TZJanosi.usedCars.repository;
 
 import TZJanosi.usedCars.model.Car;
-import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.NativeQuery;
@@ -27,10 +26,6 @@ public interface CarRepository extends JpaRepository<Car,Long> {
             + "AND (:maxAgeInYears is null OR c.ageInYears<=:maxAgeInYears) "
             + "AND (:maxKm is null OR ((SELECT MAX(ks.actualValue) FROM KilometerState ks WHERE ks.car = c ) < :maxKm)) "
             + "AND (:minConditionLevel=0 OR :minConditionLevel<=c.conditionLevel)"
-
-//            "AND (:condition is null OR c.condition:<=maxAgeInYears " +
-//            "AND (:minBudget is null or p.budget>=:minBudget)" +
-//            "AND (:minBudget is null or p.budget>=:minBudget)"
             + ")"
     )
     List<Car> findAllByCriteria(@Param("brand") String brand, @Param("model") String model, @Param("maxAgeInYears") Integer maxAgeInYears, @Param("maxKm") Integer maxKm, @Param("minConditionLevel") int minConditionLevel);

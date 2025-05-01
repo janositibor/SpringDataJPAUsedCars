@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -25,5 +26,13 @@ public class KilometerState {
     public KilometerState(Integer actualValue, LocalDate date) {
         this.actualValue = actualValue;
         this.date = date;
+    }
+
+    @Override
+    public String toString() {
+        return "KilometerState{" +
+                "actualValue=" + actualValue +
+                ", date=" + date +
+                '}';
     }
 }
