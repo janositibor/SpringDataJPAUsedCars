@@ -35,7 +35,8 @@ public class CarService {
 
     public List<CarDto> findAllCars() {
         List<Car> cars=carRepository.findAll();
-        return cars.stream().map(c->modelMapper.map(c, CarDto.class)).toList();
+//        cars.stream().forEach(c->System.out.println(c.getKilometerStates()));
+        return cars.stream().map(c->modelMapper.map(c, CarDto.class)).sorted(Comparator.comparingInt(c->c.getKilometerStates().get(c.getKilometerStates().size()-1).getActualValue())).toList();
     }
 
     public CarDto addNewCar(CreateCarCommand command) {
@@ -58,10 +59,9 @@ public class CarService {
     }
 
     private List<CarDto> filteredCars(Criteria criteria) {
-        System.out.println("in filteredCars criteria: "+criteria);
+//        System.out.println("in filteredCars criteria: "+criteria);
         int minConditionLevel=criteria.getCondition()==null?0:criteria.getCondition().getValue();
         List<Car> cars=carRepository.findAllByCriteria(criteria.getBrand(), criteria.getModel(), criteria.getMaxAgeInYears(),criteria.getMaxKm(),minConditionLevel);
-        System.out.println("cars: "+cars);
         Comparator<Car> comparator=Comparator.comparingInt(Car::actualKmState);
         if(criteria.getSortDirection()!=null && criteria.getSortDirection().toString().equals("DESC")){
             comparator=comparator.reversed();

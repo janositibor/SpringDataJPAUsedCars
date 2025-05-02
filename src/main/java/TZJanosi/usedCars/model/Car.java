@@ -33,6 +33,7 @@ public class Car {
 //    @CollectionTable(name="kilometer_state", joinColumns=@JoinColumn(name="car_id"))
 //    @AttributeOverride(name="actualValue", column=@Column(name="km"))
 
+    @OrderBy("date ASC")
     private List<KilometerState> kilometerStates=new ArrayList<>();
 
     public void addKilometerState(int km){

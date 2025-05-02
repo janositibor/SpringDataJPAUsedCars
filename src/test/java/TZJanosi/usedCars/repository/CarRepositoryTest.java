@@ -69,13 +69,13 @@ class CarRepositoryTest {
         car.setModel("Swift");
         car.setAgeInYears(1);
 
-        car.addKilometerState(15555);
+        car.addKilometerState(15_555);
         carRepository.save(car);
 
         Car carFromDb=carRepository.findByIdWithKmStates(car.getId()).get();
         KilometerState kilometerState=carFromDb.getKilometerStates().get(0);
         assertThat(kilometerState)
-                .hasFieldOrPropertyWithValue("actualValue",15555)
+                .hasFieldOrPropertyWithValue("actualValue",15_555)
                 .hasFieldOrPropertyWithValue("date",LocalDate.now());
     }
     @Test

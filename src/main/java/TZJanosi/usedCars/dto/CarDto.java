@@ -1,6 +1,7 @@
 package TZJanosi.usedCars.dto;
 
 import TZJanosi.usedCars.model.CarCondition;
+import jakarta.persistence.OrderBy;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
