@@ -9,6 +9,7 @@ import TZJanosi.usedCars.service.CarService;
 import org.hibernate.annotations.processing.SQL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@ExtendWith(InitExtension.class)
 class CarControllerWebClientIT {
     @Autowired
     WebTestClient webTestClient;
@@ -31,31 +33,6 @@ class CarControllerWebClientIT {
     @Autowired
     CarService carService;
 
-    @BeforeEach
-    void init(){
-        carService.deleteAllCar();
-        webTestClient
-                .post()
-                .uri("/api/cars")
-                .bodyValue(new CreateCarCommand("Toyota","Corolla",25, CarCondition.POOR,295000))
-                .exchange();
-        webTestClient
-                .post()
-                .uri("/api/cars")
-                .bodyValue(new CreateCarCommand("Toyota","Corolla",15,CarCondition.EXCELLENT,95000))
-                .exchange();
-        webTestClient
-                .post()
-                .uri("/api/cars")
-                .bodyValue(new CreateCarCommand("BMW","X3",19,CarCondition.NORMAL,350000))
-                .exchange();
-        webTestClient
-                .post()
-                .uri("/api/cars")
-                .bodyValue(new CreateCarCommand("Toyota","Auris",5,CarCondition.EXCELLENT,55892))
-                .exchange();
-
-    }
     @Test
     void testGetCarsWithBrand(){
         webTestClient

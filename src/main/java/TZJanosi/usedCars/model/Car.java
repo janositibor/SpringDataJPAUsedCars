@@ -1,6 +1,5 @@
 package TZJanosi.usedCars.model;
 
-import TZJanosi.usedCars.dto.Criteria;
 import TZJanosi.usedCars.exception.KmStateNotValidException;
 import jakarta.persistence.*;
 import lombok.*;
