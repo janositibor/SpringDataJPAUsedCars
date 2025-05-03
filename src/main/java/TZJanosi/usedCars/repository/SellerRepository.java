@@ -17,4 +17,8 @@ public interface SellerRepository extends JpaRepository<Seller,Long> {
 
     @Query("SELECT s FROM Seller s Left JOIN FETCH s.cars WHERE LOWER(s.name) LIKE CONCAT(LOWER(:prefix), '%')")
     List<Seller> findWithName(String prefix);
+
+    @Query("SELECT s FROM Seller s Left JOIN FETCH s.cars WHERE s.id=:id")
+//    @Query("SELECT s FROM Seller s")
+    Seller findWithCarsById(Long id);
 }

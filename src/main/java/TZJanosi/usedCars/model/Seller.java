@@ -16,7 +16,8 @@ public class Seller {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "seller", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+//    @OneToMany(mappedBy = "seller", cascade = {CascadeType.PERSIST,CascadeType.REMOVE})
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.REMOVE)
     private List<Car> cars=new ArrayList<>();
 
     public Seller(Long id, String name) {

@@ -26,7 +26,8 @@ public class Car {
     @Column(name = "car_condition")
     private CarCondition condition;
     private int conditionLevel;
-    @OneToMany(mappedBy = "car", cascade = CascadeType.REMOVE)
+//    @OneToMany(mappedBy = "car", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @OneToMany(mappedBy = "car", cascade = {CascadeType.REMOVE})
 
 //    @ElementCollection
 //    @CollectionTable(name="kilometer_state", joinColumns=@JoinColumn(name="car_id"))

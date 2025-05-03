@@ -1,15 +1,13 @@
 package TZJanosi.usedCars.dto;
 
-import TZJanosi.usedCars.model.Car;
-import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class SellerDto {
     private Long id;
@@ -25,5 +23,17 @@ public class SellerDto {
         this.id = id;
         this.name = name;
         this.cars = cars;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        SellerDto sellerDto = (SellerDto) o;
+        return Objects.equals(id, sellerDto.id) && Objects.equals(name, sellerDto.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

@@ -8,13 +8,12 @@ import TZJanosi.usedCars.model.Seller;
 import TZJanosi.usedCars.repository.CarRepository;
 import TZJanosi.usedCars.repository.KilometerStateRepository;
 import TZJanosi.usedCars.repository.SellerRepository;
-import jakarta.persistence.CascadeType;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +23,8 @@ public class SellerService {
     private CarRepository carRepository;
     private SellerRepository sellerRepository;
     private KilometerStateRepository kmStateRepository;
+    @Autowired
+    private CarService carService;
 
     public SellerService(ModelMapper modelMapper, CarRepository carRepository, SellerRepository sellerRepository, KilometerStateRepository kmStateRepository) {
         this.modelMapper = modelMapper;
@@ -56,21 +57,15 @@ public class SellerService {
     @Transactional
     public SellerDto addSeller(@Valid CreateSellerCommand command) {
         Seller seller=modelMapper.map(command, Seller.class);
-        List<Car> carsToSave=new ArrayList<>();
+        sellerRepository.save(seller);
         if(command.getCars()!=null){
             for(CreateCarCommand carCommand : command.getCars()){
-                Car car=modelMapper.map(carCommand, Car.class);
-                car.setSeller(seller);
-                carsToSave.add(car);
-            }
-            if(carsToSave.size()>0){
-//            cascade = {CascadeType.PERSIST,CascadeType.REMOVE} is used in Seller.java so the next line is not needed anymore
-//            carRepository.saveAll(carsToSave);
-                seller.setCars(carsToSave);
+                carCommand.setSeller(seller);
+                carService.addNewCar(carCommand);
             }
         }
 
-        sellerRepository.save(seller);
+
 
         return modelMapper.map(seller, SellerDto.class);
     }
@@ -79,5 +74,36 @@ public class SellerService {
     public void deleteAll() {
         sellerRepository.deleteAll();
         sellerRepository.resetIdGenerator();
+    }
+
+    public SellerDto findById(Long id) {
+        Seller seller=getById(id);
+        return modelMapper.map(seller,SellerDto.class);
+    }
+
+    public SellerDto addCarToSeller(Long id, @Valid CreateCarCommand carCommand) {
+        Seller seller=getById(id);
+        carCommand.setSeller(seller);
+        carService.addNewCar(carCommand);
+        seller.addCar(modelMapper.map(carCommand, Car.class));
+        SellerDto sellerDto=modelMapper.map(seller,SellerDto.class);
+        return sellerDto;
+    }
+
+    private Seller getById(Long id){
+        Seller seller=sellerRepository.findWithCarsById(id);
+        return seller;
+    }
+
+    @Transactional
+    public SellerDto updateSeller(Long id, @Valid CreateSellerCommand sellerCommand) {
+        Seller seller=sellerRepository.findWithCarsById(id);
+        seller.setName(sellerCommand.getName());
+        return modelMapper.map(seller,SellerDto.class);
+    }
+
+    @Transactional
+    public void deleteSeller(Long id) {
+    sellerRepository.deleteById(id);
     }
 }
