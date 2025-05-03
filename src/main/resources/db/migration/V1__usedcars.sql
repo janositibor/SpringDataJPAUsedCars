@@ -1,10 +1,10 @@
-CREATE TABLE kilometer_States
+CREATE TABLE kilometer_states
 (
     id     BIGINT AUTO_INCREMENT NOT NULL,
 	car_id BIGINT NOT NULL,
     km INT NULL,
     date date NULL,
-	CONSTRAINT pk_kilometer_States PRIMARY KEY (id)
+	CONSTRAINT pk_kilometer_states PRIMARY KEY (id)
 );
 
 CREATE TABLE sellers
@@ -20,8 +20,8 @@ CREATE TABLE cars
 	seller_id BIGINT NULL,
     brand         VARCHAR(255) NULL,
     model          VARCHAR(255) NULL,
-    age_In_Years	INT NULL,
-    condition_Level	INT NULL,
+    age_in_years	INT NULL,
+    condition_level	INT NULL,
     car_condition VARCHAR(255) NULL,
     CONSTRAINT pk_cars PRIMARY KEY (id)
 );
@@ -29,5 +29,5 @@ CREATE TABLE cars
 ALTER TABLE cars
     ADD CONSTRAINT FK_CARS_ON_SELLER FOREIGN KEY (seller_id) REFERENCES sellers (id);
 
-ALTER TABLE kilometer_States
-    ADD CONSTRAINT fk_kilometer_States_on_car FOREIGN KEY (car_id) REFERENCES cars (id);
+ALTER TABLE kilometer_states
+    ADD CONSTRAINT fk_kilometer_states_on_car FOREIGN KEY (car_id) REFERENCES cars (id);
