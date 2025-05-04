@@ -1,0 +1,1 @@
+docker network create --driver bridge usedCars-network > 01-NetworkCreated.txt

@@ -1,0 +1,1 @@
+docker run -d -e MYSQL_DATABASE=usedcars -e MYSQL_USER=usedcarsUser -e MYSQL_PASSWORD=usedcarsPass -e MYSQL_ALLOW_EMPTY_PASSWORD=yes -p 3308:3306 --network usedCars-network --name usedCars-network-mariadb mariadb > 02-DockerRun.txt

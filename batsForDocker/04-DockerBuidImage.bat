@@ -1,0 +1,1 @@
+docker build -t usedcars .. > 04-ApplicationImageBuilt.txt

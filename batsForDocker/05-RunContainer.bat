@@ -1,0 +1,1 @@
+docker run -d -e SPRING_DATASOURCE_URL=jdbc:mariadb://usedCars-network-mariadb/usedcars -e SPRING_DATASOURCE_USERNAME=usedcarsUser -e SPRING_DATASOURCE_PASSWORD=usedcarsPass -p 8080:8080 --network usedCars-network --name usedcars_container usedcars > 05-ContainerRun.txt

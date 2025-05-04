@@ -1,0 +1,1 @@
+docker network inspect usedCars-network > 06-LocationsNet.txt
